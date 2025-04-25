@@ -1,46 +1,36 @@
-# lambda/index.py
 import json
 import os
 import boto3
-import re  # 正規表現モジュールをインポート
+import re
 from botocore.exceptions import ClientError
-import requests
+import urllib.request
+from urllib.error import HTTPError, URLError
 
 # Lambda コンテキストからリージョンを抽出する関数
 def extract_region_from_arn(arn):
-    # ARN 形式: arn:aws:lambda:region:account-id:function:function-name
     match = re.search('arn:aws:lambda:([^:]+):', arn)
     if match:
         return match.group(1)
-    return "us-east-1"  # デフォルト値
+    return "us-east-1"
 
-# グローバル変数としてクライアントを初期化（初期値）
 bedrock_client = None
 
-# モデルID
-#MODEL_ID = os.environ.get("MODEL_ID", "us.amazon.nova-lite-v1:0")
-
-# FastAIPのエンドポイント
 MODEL_API_URL = os.environ.get("MODEL_API_URL", "https://668e-34-126-102-232.ngrok-free.app/generate")
 
-# Fast API用
 def lambda_handler(event, context):
     try:
         print("Received event:", json.dumps(event))
 
-        # 認証ユーザー情報の取得（あれば）
         user_info = None
         if 'requestContext' in event and 'authorizer' in event['requestContext']:
             user_info = event['requestContext']['authorizer']['claims']
             print(f"Authenticated user: {user_info.get('email') or user_info.get('cognito:username')}")
 
-        # リクエストボディの取得
         body = json.loads(event['body'])
         message = body['message']
         conversation_history = body.get('conversationHistory', [])
         print("User message:", message)
 
-        # プロンプトの生成（シンプルに履歴を連結）
         prompt = ""
         for msg in conversation_history:
             role = msg["role"]
@@ -51,7 +41,6 @@ def lambda_handler(event, context):
                 prompt += f"アシスタント: {content}\n"
         prompt += f"ユーザー: {message}\nアシスタント:"
 
-        # 独自モデルAPIにPOSTリクエストを送信
         payload = {
             "prompt": prompt,
             "max_new_tokens": 100,
@@ -61,18 +50,21 @@ def lambda_handler(event, context):
         }
 
         print("Sending request to custom model API")
-        response = requests.post(MODEL_API_URL, json=payload, headers={
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        })
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(MODEL_API_URL, data=data, method="POST")
+        req.add_header("Content-Type", "application/json")
+        req.add_header("Accept", "application/json")
 
-        if response.status_code != 200:
-            raise Exception(f"Model API error: {response.status_code}, {response.text}")
+        try:
+            with urllib.request.urlopen(req) as res:
+                response_data = json.loads(res.read().decode("utf-8"))
+        except HTTPError as e:
+            raise Exception(f"Model API error: {e.code}, {e.read().decode('utf-8')}")
+        except URLError as e:
+            raise Exception(f"Failed to reach server: {e.reason}")
 
-        response_data = response.json()
         assistant_response = response_data["generated_text"]
 
-        # 会話履歴に応答を追加
         conversation_history.append({"role": "user", "content": message})
         conversation_history.append({"role": "assistant", "content": assistant_response})
 
