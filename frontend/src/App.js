@@ -119,6 +119,7 @@ function ChatInterface({ signOut, user }) {
           {messages.length === 0 ? (
             <div className="welcome-message">
               <h2>Bedrock Chatbot へようこそ！</h2>
+              {/* <h2>FastAPI() Chatbot へようこそ！</h2>*/}
               <p>何でも質問してください。</p>
             </div>
           ) : (
