@@ -4,7 +4,7 @@ import os
 import boto3
 import re  # 正規表現モジュールをインポート
 from botocore.exceptions import ClientError
-
+import requesrt
 
 # Lambda コンテキストからリージョンを抽出する関数
 def extract_region_from_arn(arn):
@@ -18,7 +18,10 @@ def extract_region_from_arn(arn):
 bedrock_client = None
 
 # モデルID
-MODEL_ID = os.environ.get("MODEL_ID", "us.amazon.nova-lite-v1:0")
+#MODEL_ID = os.environ.get("MODEL_ID", "us.amazon.nova-lite-v1:0")
+
+# FastAIPのエンドポイント
+MODEL_API_URL = os.environ.get("MODEL_API_URL", "https://d987-34-126-102-232.ngrok-free.app/generate")
 
 # Fast API用
 def lambda_handler(event, context):
