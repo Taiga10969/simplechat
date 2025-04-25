@@ -103,7 +103,7 @@ function ChatInterface({ signOut, user }) {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>🐯 チャットボット</h1>
+        <h1>🐯 Chatbot</h1>
         <div className="header-buttons">
           <button className="clear-button" onClick={clearConversation}>
             会話をクリア
@@ -161,7 +161,7 @@ function ChatInterface({ signOut, user }) {
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                handleSubmit(e);
+                //handleSubmit(e);
               }
             }}
           />
@@ -174,9 +174,8 @@ function ChatInterface({ signOut, user }) {
       <footer>
       <p>
         🚀 Powered by <strong>Amazon Bedrock</strong><br />
-        🧪 Running on <strong>FastAPI</strong> via <strong>Google Colab</strong><br />
-        👨‍💻 Created by <strong>masudataiga</strong><br />
-        🤗 Using Hugging Face model: <strong>AXCXEPT/EZO-gemma-2-2b-jpn-it when FastAPI Mode</strong>
+        🧪 Running on <strong>FastAPI</strong> via <strong>Google Colab</strong>(when not using Bedrock)<br />
+        👨‍💻 Created by <strong>Taiga MASUDA</strong>
       </p>
       </footer>
     </div>
