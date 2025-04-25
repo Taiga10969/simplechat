@@ -1,5 +1,8 @@
 # Bedrock Chatbot with Cognito Authentication
 
+
+宿題のレポートは，`report.md`に記載してあります．
+
 Amazon Bedrock を使用したチャットボットアプリケーションで、Amazon Cognito による認証機能を備えています。
 
 ## 機能
