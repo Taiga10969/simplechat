@@ -103,7 +103,7 @@ function ChatInterface({ signOut, user }) {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Bedrock LLM チャットボット</h1>
+        <h1>Taiga Masuda の LLM チャットボット (AXCXEPT/EZO-gemma-2-2b-jpn-it) </h1>
         <div className="header-buttons">
           <button className="clear-button" onClick={clearConversation}>
             会話をクリア
