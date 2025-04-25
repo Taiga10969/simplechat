@@ -103,7 +103,7 @@ function ChatInterface({ signOut, user }) {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Taiga Masuda の LLM チャットボット (AXCXEPT/EZO-gemma-2-2b-jpn-it) </h1>
+        <h1>🐯 チャットボット</h1>
         <div className="header-buttons">
           <button className="clear-button" onClick={clearConversation}>
             会話をクリア
@@ -166,13 +166,18 @@ function ChatInterface({ signOut, user }) {
             }}
           />
           <button type="submit" disabled={loading || !input.trim()}>
-            送信
+            🐯送信
           </button>
         </form>
       </main>
       
       <footer>
-        <p>Powered by Amazon Bedrock</p>
+      <p>
+        🚀 Powered by <strong>Amazon Bedrock</strong><br />
+        🧪 Running on <strong>FastAPI</strong> via <strong>Google Colab</strong><br />
+        👨‍💻 Created by <strong>masudataiga</strong><br />
+        🤗 Using Hugging Face model: <strong>AXCXEPT/EZO-gemma-2-2b-jpn-it when FastAPI Mode</strong>
+      </p>
       </footer>
     </div>
   );
