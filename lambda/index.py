@@ -18,7 +18,8 @@ bedrock_client = None
 ## Bedrockを使う時
 
 # モデルID
-MODEL_ID = os.environ.get("MODEL_ID", "us.amazon.nova-lite-v1:0")
+#MODEL_ID = os.environ.get("MODEL_ID", "us.amazon.nova-lite-v1:0")
+MODEL_ID = os.environ.get("MODEL_ID", "us.amazon.nova-micro-v1:0")
 
 def lambda_handler(event, context):
     try:
