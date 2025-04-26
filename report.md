@@ -23,8 +23,43 @@ UIを改良し，`MODEL_ID:us.amazon.nova-lite-v1:0`を実行したときの結�
 7bもの大きさのモデルをGoogle Colaboratory（無料枠）でも動作させるためには，量子化してモデルをロードする工夫をしている．<br>
 詳しくは，[ここ](https://github.com/Taiga10969/lecture-ai-engineering/blob/master/day1/03_FastAPI/README.md) に記載してあります．<br>
 
-この独自モデルを利用するために，`./lambda/index.py`を以下のようにしてFastAPIにアクセスするように変更した．
+この独自モデルを利用するために，`./lambda/index.py`をFastAPIにアクセスするように変更した．変更点を最後に示す．<br>
+▼実行結果
 
+<img src="https://github.com/Taiga10969/simplechat/blob/main/report/%E7%94%BB%E9%9D%A2%E5%8F%8E%E9%8C%B2%202025-04-25%2016.56.59.gif" alt="" width="500" />
+
+▼`elyza/ELYZA-japanese-CodeLlama-7b-instruct`が生成したmatplotlibのコードの実行結果
+
+<img src="https://github.com/Taiga10969/simplechat/blob/main/report/%E7%94%BB%E9%9D%A2%E5%8F%8E%E9%8C%B2%202025-04-25%2016.56.59.gif" alt="" width="500" />
+
+### [+α] UIの改善
+1. `Enter` を押すと変換の確定にも関わらずメッセージが送られてしまう問題を解決 (APP.js)
+   <br>
+    ```
+    <form onSubmit={handleSubmit} className="input-form">
+      <textarea
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="メッセージを入力..."
+        disabled={loading}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            //handleSubmit(e);
+          }
+        }}
+      />
+      <button type="submit" disabled={loading || !input.trim()}>
+        🐯送信
+      </button>
+    </form>
+    ```
+2. `CSS`の改善
+   CSSを適宜変更し，🐯イメージ（自分の名前Taigaから来ている笑）に変更しました！
+
+---
+
+### 補足資料
 ```
 MODEL_API_URL = os.environ.get("MODEL_API_URL", "https://c7a2-34-138-10-164.ngrok-free.app/generate")
 
@@ -111,27 +146,3 @@ def lambda_handler(event, context):
         }
 ```
 
-### [+α] UIの改善
-1. `Enter` を押すと変換の確定にも関わらずメッセージが送られてしまう問題を解決 (APP.js)
-   <br>
-    ```
-    <form onSubmit={handleSubmit} className="input-form">
-      <textarea
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="メッセージを入力..."
-        disabled={loading}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            //handleSubmit(e);
-          }
-        }}
-      />
-      <button type="submit" disabled={loading || !input.trim()}>
-        🐯送信
-      </button>
-    </form>
-    ```
-2. `CSS`の改善
-   CSSを適宜変更し，🐯イメージ（自分の名前Taigaから来ている笑）に変更しました！
