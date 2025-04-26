@@ -3,7 +3,7 @@
 - **Omnicampus アカウント名**：`taiga10969`  
 - **名前**：増田大河
 
-### Day1 ディレクトリの実施内容については，以下にまとめています。
+### AWSの演習実施内容については，以下にまとめています。
 - [AWSの演習実施内容について](https://github.com/Taiga10969/simplechat/blob/main/report.md)
 
 ---
