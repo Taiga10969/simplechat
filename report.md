@@ -26,11 +26,11 @@ UIを改良し，`MODEL_ID:us.amazon.nova-lite-v1:0`を実行したときの結�
 この独自モデルを利用するために，`./lambda/index.py`をFastAPIにアクセスするように変更した．変更点を最後に示す．<br>
 ▼実行結果
 
-<img src="https://github.com/Taiga10969/simplechat/blob/main/report/%E7%94%BB%E9%9D%A2%E5%8F%8E%E9%8C%B2%202025-04-25%2016.56.59.gif" alt="" width="500" />
+<img src="https://github.com/Taiga10969/simplechat/blob/main/report/%E7%94%BB%E9%9D%A2%E5%8F%8E%E9%8C%B2-2025-04-26-23.22.17.gif" alt="" width="500" />
 
 ▼`elyza/ELYZA-japanese-CodeLlama-7b-instruct`が生成したmatplotlibのコードの実行結果
 
-<img src="https://github.com/Taiga10969/simplechat/blob/main/report/%E7%94%BB%E9%9D%A2%E5%8F%8E%E9%8C%B2%202025-04-25%2016.56.59.gif" alt="" width="500" />
+<img src="https://github.com/Taiga10969/simplechat/blob/main/report/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%202025-04-26%2023.27.50.png" alt="" width="500" />
 
 ### [+α] UIの改善
 1. `Enter` を押すと変換の確定にも関わらずメッセージが送られてしまう問題を解決 (APP.js)
@@ -59,7 +59,7 @@ UIを改良し，`MODEL_ID:us.amazon.nova-lite-v1:0`を実行したときの結�
 
 ---
 
-### 補足資料
+### 補足資料 (`./lambda/index.py`の変更点）
 ```
 MODEL_API_URL = os.environ.get("MODEL_API_URL", "https://c7a2-34-138-10-164.ngrok-free.app/generate")
 
