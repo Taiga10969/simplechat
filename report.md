@@ -21,8 +21,95 @@ UIを改良し，`MODEL_ID:us.amazon.nova-lite-v1:0`を実行したときの結�
 
 使用したモデル：`elyza/ELYZA-japanese-CodeLlama-7b-instruct`<br>
 7bもの大きさのモデルをGoogle Colaboratory（無料枠）でも動作させるためには，量子化してモデルをロードする工夫をしている．<br>
-詳しくは，[ここ](https://github.com/Taiga10969/lecture-ai-engineering/blob/master/day1/03_FastAPI/README.md) に記載してあります．
+詳しくは，[ここ](https://github.com/Taiga10969/lecture-ai-engineering/blob/master/day1/03_FastAPI/README.md) に記載してあります．<br>
 
+この独自モデルを利用するために，`./lambda/index.py`を以下のようにしてFastAPIにアクセスするように変更した．
+
+```
+MODEL_API_URL = os.environ.get("MODEL_API_URL", "https://c7a2-34-138-10-164.ngrok-free.app/generate")
+
+def lambda_handler(event, context):
+    try:
+        print("Received event:", json.dumps(event))
+
+        user_info = None
+        if 'requestContext' in event and 'authorizer' in event['requestContext']:
+            user_info = event['requestContext']['authorizer']['claims']
+            print(f"Authenticated user: {user_info.get('email') or user_info.get('cognito:username')}")
+
+        body = json.loads(event['body'])
+        message = body['message']
+        conversation_history = body.get('conversationHistory', [])
+        print("User message:", message)
+
+        prompt = ""
+        for msg in conversation_history:
+            role = msg["role"]
+            content = msg["content"]
+            if role == "user":
+                prompt += f"ユーザー: {content}\n"
+            elif role == "assistant":
+                prompt += f"アシスタント: {content}\n"
+        prompt += f"ユーザー: {message}\nアシスタント:"
+
+        payload = {
+            "prompt": prompt,
+            "max_new_tokens": 100,
+            "do_sample": True,
+            "temperature": 0.7,
+            "top_p": 0.9
+        }
+
+        print("Sending request to custom model API")
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(MODEL_API_URL, data=data, method="POST")
+        req.add_header("Content-Type", "application/json")
+        req.add_header("Accept", "application/json")
+
+        try:
+            with urllib.request.urlopen(req) as res:
+                response_data = json.loads(res.read().decode("utf-8"))
+        except HTTPError as e:
+            raise Exception(f"Model API error: {e.code}, {e.read().decode('utf-8')}")
+        except URLError as e:
+            raise Exception(f"Failed to reach server: {e.reason}")
+
+        assistant_response = response_data["generated_text"]
+
+        conversation_history.append({"role": "user", "content": message})
+        conversation_history.append({"role": "assistant", "content": assistant_response})
+
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "OPTIONS,POST"
+            },
+            "body": json.dumps({
+                "success": True,
+                "response": assistant_response,
+                "conversationHistory": conversation_history
+            })
+        }
+
+    except Exception as error:
+        print("Error:", str(error))
+        return {
+            "statusCode": 500,
+            "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "OPTIONS,POST"
+            },
+            "body": json.dumps({
+                "success": False,
+                "error": str(error)
+            })
+        }
+```
 
 ### [+α] UIの改善
 1. `Enter` を押すと変換の確定にも関わらずメッセージが送られてしまう問題を解決 (APP.js)
